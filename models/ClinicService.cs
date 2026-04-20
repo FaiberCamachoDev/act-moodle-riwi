@@ -24,7 +24,7 @@ public class Vaccination : VeterinaryService
 {
     public Vaccination() : base("Annual Vaccination", 35.00m) { }
 
-    public override void Attend(Patient patient)
+    public override void Attend(Patient patient) // parametros Patient para poder usar las propiedades en las ecuaciones matematicas.
     {
         UIHelpers.PrintSuccess($"Starting {ServiceName} for patient {patient.Name}.");
         WriteLine($"Applying vaccines to {patient.OwnedPets.Count} pets.");
