@@ -159,4 +159,9 @@ public class PatientService
         WriteLine("\nPress ENTER to continue...");
         ReadLine();
     }
+    // este metodo devuelve la lista para que otros puedan leerla, pero manteniendo el control.
+    public List<Patient> GetPatientsDatabase()
+    {
+        return _patientsDatabase;
+    }
 }
