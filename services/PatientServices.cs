@@ -12,82 +12,66 @@ public class PatientService
         _patientsDatabase = new List<Patient>();
     }
 
+    public List<Patient> GetPatientsDatabase()
+    {
+        return _patientsDatabase;
+    }
+
     public bool RegisterPatient()
     {
-        UIHelpers.PrintTitle("Register Patient & Pet");
-        UIHelpers.PrintDescription("Please fill in the patient's information below");
+        UIHelpers.PrintTitle("Register Patient & Pets");
 
         Patient newPatient = new Patient();
         newPatient.Id = _patientsDatabase.Count > 0 ? _patientsDatabase.Max(p => p.Id) + 1 : 1;
 
-        // --- DATOS DEL PACIENTE ---
-        do
-        {
-            Write("Patient Name: ");
-            newPatient.Name = ReadLine()?.Trim() ?? "";
-            
-            if (string.IsNullOrEmpty(newPatient.Name))
-            {
-                UIHelpers.PrintError("Name cannot be empty.");
-            }
-        } while (string.IsNullOrEmpty(newPatient.Name));
+        Write("Patient Name: ");
+        newPatient.Name = ReadLine()?.Trim() ?? "";
 
-        bool isAgeValid = false;
-        while (!isAgeValid)
-        {
-            Write("Age: ");
-            string ageInput = ReadLine() ?? "";
-            
-            if (int.TryParse(ageInput, out int parsedAge))
-            {
-                if (parsedAge < 0)
-                {
-                    UIHelpers.PrintError("Age cannot be a negative number.");
-                }
-                else
-                {
-                    newPatient.Age = parsedAge;
-                    isAgeValid = true;
-                }
-            }
-            else
-            {
-                UIHelpers.PrintError("Please enter a valid integer number for the age.");
-            }
-        }
-        Write("Phone: "); 
-        newPatient.Phone = ReadLine()?.Trim() ?? "Not specified";
-        
+        Write("Age: ");
+        if (int.TryParse(ReadLine(), out int parsedAge)) newPatient.Age = parsedAge;
+
+        Write("Phone: ");
+        newPatient.Phone = ReadLine()?.Trim() ?? "";
+
+        Write("Address: ");
+        newPatient.Address = ReadLine()?.Trim() ?? "";
+
         Write("Main Symptom: ");
         newPatient.Symptom = ReadLine()?.Trim() ?? "Not specified";
 
-        // --- DATOS DE LA MASCOTA ---
-        UIHelpers.PrintDescription("Pet Information");
-        Pet newPet = new Pet();
-
+        // --- REGISTRO MÚLTIPLE DE MASCOTAS ---
+        bool addMorePets = true;
         do
         {
-            Write("Pet Name: ");
-            newPet.Name = ReadLine()?.Trim() ?? "";
+            UIHelpers.PrintDescription($"Adding Pet #{newPatient.OwnedPets.Count + 1}");
             
-            if (string.IsNullOrEmpty(newPet.Name))
+            Write("Pet Name: ");
+            string petName = ReadLine()?.Trim() ?? "Unknown";
+
+            Write("Age: ");
+            int.TryParse(ReadLine(), out int petAge);
+
+            Write("Species (Dog, Cat, Bird, etc.): ");
+            string species = ReadLine()?.Trim() ?? "Unknown";
+
+            Write("Breed: ");
+            string breed = ReadLine()?.Trim() ?? "Unknown";
+
+            // Usamos el nuevo constructor de Pet
+            Pet newPet = new Pet(petName, petAge, species, breed);
+            newPatient.OwnedPets.Add(newPet);
+
+            Write("\nDo you want to add another pet for this patient? (y/n): ");
+            string answer = ReadLine()?.Trim().ToLower() ?? "n";
+            if (answer != "y")
             {
-                UIHelpers.PrintError("Pet Name cannot be empty.");
+                addMorePets = false;
             }
-        } while (string.IsNullOrEmpty(newPet.Name));
 
-        Write("Species (e.g., Dog, Cat): ");
-        newPet.Species = ReadLine()?.Trim() ?? "Not specified";
+        } while (addMorePets);
 
-        Write("Breed: ");
-        newPet.Breed = ReadLine()?.Trim() ?? "Not specified";
-
-        // VINCULACIÓN: Le asignamos la mascota recién creada al paciente
-        newPatient.PatientPet = newPet;
-
-        // Guardamos todo en la base de datos
         _patientsDatabase.Add(newPatient);
-        UIHelpers.PrintSuccess($"Patient '{newPatient.Name}' and pet '{newPet.Name}' registered successfully!");
+        UIHelpers.PrintSuccess($"Patient '{newPatient.Name}' registered with {newPatient.OwnedPets.Count} pet(s).");
         
         Pause();
         return false;
@@ -100,18 +84,21 @@ public class PatientService
         if (_patientsDatabase.Count == 0)
         {
             UIHelpers.PrintInfo("No records in the system yet.");
+            Pause();
+            return false;
         }
-        else
+
+        foreach (var patient in _patientsDatabase)
         {
-            UIHelpers.PrintDescription("Current registered records in the database");
+            // Usamos el método de la interfaz IRegisterable
+            patient.DisplayInformation();
             
-            foreach (var patient in _patientsDatabase)
+            foreach (var pet in patient.OwnedPets)
             {
-                WriteLine($"[{patient.Id}] Owner: {patient.Name} ({patient.Age} yrs) | Symptom: {patient.Symptom}");
-                // Mostramos los datos de la mascota (PatientPet)
-                WriteLine($"      Pet: {patient.PatientPet.Name} | Species: {patient.PatientPet.Species} | Breed: {patient.PatientPet.Breed}");
-                WriteLine("--------------------------------------------------");
+                // Aquí aplicamos Polimorfismo. Automáticamente ejecutará MakeSound() de Pet.
+                pet.DisplayInformation(); 
             }
+            WriteLine("--------------------------------------------------");
         }
         
         Pause();
@@ -121,8 +108,6 @@ public class PatientService
     public bool SearchPatient()
     {
         UIHelpers.PrintTitle("Search Record");
-        UIHelpers.PrintDescription("Search by exact or partial owner's name");
-        
         Write("Enter the owner's name to search: ");
         string searchName = ReadLine()?.Trim() ?? "";
 
@@ -132,11 +117,11 @@ public class PatientService
         if (foundPatient != null)
         {
             UIHelpers.PrintSuccess("Record Found!");
-            WriteLine($"Owner ID: {foundPatient.Id}");
-            WriteLine($"Name: {foundPatient.Name} | Age: {foundPatient.Age}");
-            WriteLine($"Symptom: {foundPatient.Symptom}");
-            WriteLine($"Pet Name: {foundPatient.PatientPet.Name}");
-            WriteLine($"Pet Species: {foundPatient.PatientPet.Species} | Breed: {foundPatient.PatientPet.Breed}");
+            foundPatient.DisplayInformation();
+            foreach (var pet in foundPatient.OwnedPets)
+            {
+                pet.DisplayInformation();
+            }
         }
         else
         {
@@ -147,9 +132,40 @@ public class PatientService
         return false;
     }
 
+    // Nuevo método para probar las Clases Abstractas
+    public bool AttendPatient()
+    {
+        UIHelpers.PrintTitle("Attend Patient");
+        Write("Enter patient ID to attend: ");
+        
+        if (int.TryParse(ReadLine(), out int id))
+        {
+            var patient = _patientsDatabase.FirstOrDefault(p => p.Id == id);
+            if (patient != null)
+            {
+                // Usamos Polimorfismo con clases abstractas
+                VeterinaryService service;
+                
+                Write("Select service (1. General Consultation, 2. Vaccination): ");
+                string choice = ReadLine()?.Trim() ?? "1";
+
+                if (choice == "2") service = new Vaccination();
+                else service = new GeneralConsultation();
+
+                service.Attend(patient);
+            }
+            else
+            {
+                UIHelpers.PrintError("Patient not found.");
+            }
+        }
+        Pause();
+        return false;
+    }
+
     public bool ShowError()
     {
-        UIHelpers.PrintError("Invalid option. Please choose a valid number from the menu.");
+        UIHelpers.PrintError("Invalid option.");
         Pause();
         return false;
     }
@@ -158,10 +174,5 @@ public class PatientService
     {
         WriteLine("\nPress ENTER to continue...");
         ReadLine();
-    }
-    // este metodo devuelve la lista para que otros puedan leerla, pero manteniendo el control.
-    public List<Patient> GetPatientsDatabase()
-    {
-        return _patientsDatabase;
     }
 }

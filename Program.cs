@@ -19,7 +19,8 @@ internal partial class Program
             WriteLine("1. Register new patient and pet");
             WriteLine("2. List all records");
             WriteLine("3. Search patient by name");
-            WriteLine("4. Advanced Analytics (LINQ Reports)"); // Nueva opción
+            WriteLine("4. Attend Patient (Veterinary Services)"); // <-- Nueva implementación
+            WriteLine("5. Advanced Analytics (LINQ Reports)"); // Nueva opción
             WriteLine("5. Exit");
             Write("\nSelect an option: ");
 
@@ -30,8 +31,9 @@ internal partial class Program
                 "1" => dataService.RegisterPatient(),
                 "2" => dataService.ListPatients(),
                 "3" => dataService.SearchPatient(),
-                "4" => ShowAnalyticsMenu(dataService, reportsService), // Llamada al submenú
-                "5" => true,
+                "4" => dataService.AttendPatient(),
+                "5" => ShowAnalyticsMenu(dataService, reportsService), // Llamada al submenú,
+                "6" => true,
                 _   => dataService.ShowError()
             };
 
