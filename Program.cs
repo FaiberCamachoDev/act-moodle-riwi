@@ -1,11 +1,50 @@
 ﻿
 using services;
 using helpers;
+using modules_activities.Exceptions;
+using modules_activities.Utils;
 
 internal partial class Program
 {
     static void Main(string[] args)
     {
+        // prueba del trycatch
+        Console.WriteLine("\n--- SISTEMA DE BÚSQUEDA DE MASCOTAS ---");
+
+    // 1. INTENTAMOS EJECUTAR EL CÓDIGO
+        try 
+        {
+            Console.WriteLine("Buscando a la mascota 'Pelusa' en el sistema...");
+    
+            bool mascotaExiste = false; // Simulamos que buscamos en BD y no está
+    
+            if (!mascotaExiste)
+            {
+                // Forzamos (lanzamos) nuestro propio error personalizado
+                throw new PetNotFinded("La mascota 'Pelusa' no tiene un historial médico registrado.");
+            }
+
+            Console.WriteLine("Mascota encontrada. Abriendo historial..."); // Esto no se ejecutará
+        }
+    // 2. ATRAPAMOS ERRORES ESPECÍFICOS DE LA CLÍNICA
+        catch (PetNotFinded ex)
+        {
+            // msg to user
+            Console.WriteLine($"[AVISO]: {ex.Message}");            
+            Console.WriteLine("Sugerencia: Verifique el nombre o registre una nueva mascota.");
+            Logger.LogError("Búsqueda de Mascota (PetNotFindedException)", ex);
+        }
+// 3. ATRAPAMOS CUALQUIER OTRO ERROR INESPERADO (Ej. Se cayó el internet)
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[ERROR]: Ocurrió un problema, inténtelo más tarde. Soporte técnico ha sido notificado.");
+            Logger.LogError("Fallo General Inesperado", ex);
+        }
+// 4. (Siempre se ejecuta)
+        finally
+        {
+            Console.WriteLine("[SISTEMA]: Cerrando conexión con la base de datos de búsqueda.");
+        }
         // Instanciamos ambos servicios
         PatientService dataService = new PatientService();
         ClinicalReports reportsService = new ClinicalReports();
@@ -14,14 +53,14 @@ internal partial class Program
 
         do
         {
-            Clear();
+            // Clear(); // borrar clear para ver el funcionamiento de la task 5(try-catch-finally) y 6
             UIHelpers.PrintTitle("Clinic Health+ Management System");
             WriteLine("1. Register new patient and pet");
             WriteLine("2. List all records");
             WriteLine("3. Search patient by name");
             WriteLine("4. Attend Patient (Veterinary Services)"); // <-- Nueva implementación
             WriteLine("5. Advanced Analytics (LINQ Reports)"); // Nueva opción
-            WriteLine("5. Exit");
+            WriteLine("6. Exit");
             Write("\nSelect an option: ");
 
             string userChoice = ReadLine()?.Trim() ?? "";

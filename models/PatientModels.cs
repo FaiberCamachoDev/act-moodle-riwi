@@ -1,6 +1,8 @@
+using modules_activities.Interfaces;
+
 namespace models;
 
-public class Patient : IRegisterable
+public class Patient : IRegisterable, INotifications
 {
     public int Id { get; set; }
     public string Name { get; set; }
@@ -28,5 +30,10 @@ public class Patient : IRegisterable
         Console.WriteLine($"[Patient ID: {Id}] {Name} | Phone: {Phone} | Address: {Address}");
         Console.WriteLine($"Main Symptom: {Symptom}");
         Console.WriteLine($"Total Pets Owned: {OwnedPets.Count}");
+    }
+
+    public void SendNotifications()
+    {
+        WriteLine($"[Notification to {Name}]: Hi, Remember your pet's appointment tomorrow");
     }
 }
