@@ -10,15 +10,33 @@ internal partial class Program
     {
         //task 2 test
         // esto es para probar el funcionamiento async, en program. :D 
-        // ClinicManager manager = new ClinicManager();
+         ClinicManager manager = new ClinicManager();
         // Task taskRegister = manager.RegisterPatientAsync("Roobin");
         // Console.WriteLine("[2. Durante] El recepcionista está cobrando a otro cliente...");
         // Console.WriteLine("[2. Durante] El recepcionista está contestando el teléfono...");
          // la funcion del await es esperar... el proceso es que entra al metodo y al llegar al delay,
         //el programa le dice que esperar 3 segundos en 2do plano y que el vuelva al main y siga con su vida. 7u7
         
-        //no deja que el programa avance por afuera del await hasta recibir la promesa
         
+        Console.WriteLine("\n--- TASK 3 y 4: PROCESOS EN PARALELO ---");
+
+    // 1. Lanzamos tres tareas simultáneas (guardamos los 3 tickets)
+        Task historialTask = manager.RegisterPatientAsync("Cargando historial del Firu...");
+        Task appoitTask = manager.RegisterPatientAsync("Agendando cita de robin ...");
+        Task notiTask = manager.RegisterPatientAsync("Enviando correo a dueño de ...");
+
+    // 2. Agrupamos los tickets en una lista o arreglo
+        Task[] morningTasks = { historialTask, appoitTask, notiTask };
+
+        Console.WriteLine("[Sistema] Las tres tareas se están ejecutando al mismo tiempo...\n");
+
+    // 3. USO DE Task.WhenAny: El sistema reacciona en cuanto la PRIMERA tarea termine
+        Task primeraEnTerminar = await Task.WhenAny(morningTasks);
+        Console.WriteLine("»»» Aviso! El primer proceso ha terminado con éxito. (El resto sigue corriendo de fondo).");
+
+    // 4. USO DE Task.WhenAll: El sistema hace una pausa obligatoria hasta que TODAS terminen
+        await Task.WhenAll(morningTasks);
+        Console.WriteLine("»»» Excelente! Todos los procesos de la mañana han finalizado.");
         
         // prueba del trycatch
         //Console.WriteLine("\n--- SISTEMA DE BÚSQUEDA DE MASCOTAS ---");
