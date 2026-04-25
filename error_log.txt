@@ -1,1 +1,6 @@
 [2026-04-24 18:17:49] ERROR en Búsqueda de Mascota (PetNotFindedException) | Detalle técnico: La mascota 'Pelusa' no tiene un historial médico registrado.
+[2026-04-24 20:28:17] ERROR en Búsqueda de Mascota (PetNotFindedException) | Detalle técnico: La mascota 'Pelusa' no tiene un historial médico registrado.
+[2026-04-24 20:31:17] ERROR en Búsqueda de Mascota (PetNotFindedException) | Detalle técnico: La mascota 'Pelusa' no tiene un historial médico registrado.
+[2026-04-24 20:55:15] ERROR en Búsqueda de Mascota (PetNotFindedException) | Detalle técnico: La mascota 'Pelusa' no tiene un historial médico registrado.
+[2026-04-24 20:56:02] ERROR en Búsqueda de Mascota (PetNotFindedException) | Detalle técnico: La mascota 'Pelusa' no tiene un historial médico registrado.
+[2026-04-24 20:57:44] ERROR en Búsqueda de Mascota (PetNotFindedException) | Detalle técnico: La mascota 'Pelusa' no tiene un historial médico registrado.

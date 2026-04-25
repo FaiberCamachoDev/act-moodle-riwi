@@ -1,15 +1,27 @@
-﻿
-using services;
+﻿using services;
 using helpers;
 using modules_activities.Exceptions;
 using modules_activities.Utils;
+using models;
 
 internal partial class Program
 {
-    static void Main(string[] args)
+    static async Task Main(string[] args)
     {
+        //task 2 test
+        // esto es para probar el funcionamiento async, en program. :D 
+        // ClinicManager manager = new ClinicManager();
+        // Task taskRegister = manager.RegisterPatientAsync("Roobin");
+        // Console.WriteLine("[2. Durante] El recepcionista está cobrando a otro cliente...");
+        // Console.WriteLine("[2. Durante] El recepcionista está contestando el teléfono...");
+         // la funcion del await es esperar... el proceso es que entra al metodo y al llegar al delay,
+        //el programa le dice que esperar 3 segundos en 2do plano y que el vuelva al main y siga con su vida. 7u7
+        
+        //no deja que el programa avance por afuera del await hasta recibir la promesa
+        
+        
         // prueba del trycatch
-        Console.WriteLine("\n--- SISTEMA DE BÚSQUEDA DE MASCOTAS ---");
+        //Console.WriteLine("\n--- SISTEMA DE BÚSQUEDA DE MASCOTAS ---");
 
     // 1. INTENTAMOS EJECUTAR EL CÓDIGO
         try 
@@ -79,6 +91,7 @@ internal partial class Program
         } while (!exitProgram);
 
         UIHelpers.PrintInfo("Closing the application. Goodbye!");
+        // await taskRegister;
     }
 
     // --- SUBMENÚ DE REPORTES ---
@@ -127,7 +140,7 @@ internal partial class Program
                     break;
             }
         } while (!backToMain);
-
+        
         // Retornamos false para que el Main Menu no se cierre al volver
         return false; 
     }
